@@ -15,6 +15,7 @@ function install_dependencies {
   sudo dnf install -y git
   sudo curl -sL https://rpm.nodesource.com/setup_14.x | bash -
   sudo dnf install -y nodejs
+  sudo mv /home/admin/mongodb-org4.4.repo /etc/yum.repos.d/mongodb-org-4.4.repo
   sudo dnf install -y mongodb-org
   sudo dnf install -y epel-release
   sudo dnf install -y nginx
@@ -46,6 +47,11 @@ function start_and_enable_services {
   sudo systemctl enable nginx
   sudo systemctl start mongod
   sudo systemctl enable mongod
+}
+
+function move_setup_files {
+  sudo mv /home/admin/todoapp.service /etc/systemd/system/todoapp.service
+  sudo mv /home/admin/nginx.conf /etc/nginx/nginx.conf
 }
 
 setup_user
