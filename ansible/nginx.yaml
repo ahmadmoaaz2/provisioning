@@ -1,0 +1,17 @@
+---
+- hosts: todoproxy
+  become: true
+  tasks:
+    - name: Install nginx
+      package:
+        name: nginx
+        state: present
+    - name: Copy nginx.conf
+      copy:
+        src: nginx.conf
+        dest: /etc/nginx/nginx.conf
+    - name: Enable and start nginx service
+      systemd:
+        name: nginx
+        state: started
+        enabled: true

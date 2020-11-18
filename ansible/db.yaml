@@ -1,0 +1,43 @@
+---
+- hosts: tododb
+  become: true
+  tasks:
+    - name: Copy the MongoDB repository file
+      copy:
+        src: mongodb-org-4.4.repo
+        dest: /etc/yum.repos.d/mongodb-org-4.4.repo
+    - name: Install MongoDB
+      package:
+        name: mongodb-org
+        state: present
+    - name: Install tar
+      package:
+        name: tar
+        state: present
+    - name: Copy /etc/mongod.conf
+      copy:
+        src: mongod.conf
+        dest: /etc/mongod.conf
+    - name: Start and enable mongod service
+      systemd:
+        name: mongod
+        enabled: true
+        state: started
+    - name: Download the Mongod export
+      get_url:
+        url: https://acit4640.y.vu/docs/module06/resources/mongodb_ACIT4640.tgz
+        username: student
+        password: BCIT2020
+        dest: /tmp/data.tgz
+    - name: Unpack the downloaded export
+      unarchive:
+        src: /tmp/data.tgz
+        dest: /tmp
+        remote_src: yes
+    - name: Provision initial data in the database
+      shell: mongorestore -d ACIT4640 /tmp/ACIT4640
+    - name: Make sure the firewall allows MongoDB traffic
+      firewalld:
+        port: 27017/tcp
+        state: enabled
+        immediate: yes
